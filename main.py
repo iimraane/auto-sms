@@ -4,21 +4,33 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys  # Pour envoyer des touches comme "Entrée"
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+import os
 user_wants_headless = False
 
+def read_numbers():
+    fichier_nom = 'numbers.txt' 
+    dossier_recherche = os.getcwd()  
+
+    fichier_trouve = trouver_fichier(fichier_nom, dossier_recherche)
+
+    if fichier_trouve:
+        with open(fichier_trouve, 'r') as file:
+            numeros = [ligne.strip() for ligne in file.readlines()]
+        return numeros
+    else:
+        print(f"Le fichier {fichier_nom} n'a pas été trouvé dans le répertoire {dossier_recherche}.")
+        return [] 
+
+def trouver_fichier(fichier_nom, dossier_recherche):
+    for root, dirs, files in os.walk(dossier_recherche):
+        if fichier_nom in files:
+            return os.path.join(root, fichier_nom) 
+    return None  
 
 def first_time_google_messages_connection():
 
 
-    # Lancement de Chrome
     try:
-        user_input = input("Voulez-vous que Chrome soit en mode headless ? (oui/non) ").strip().lower()
-        if user_input == "oui":
-            user_wants_headless = True
-        if user_wants_headless:
-            chrome_options.add_argument("--headless")
-
-
 
         driver = webdriver.Chrome()
         driver.get("https://messages.google.com/web") 
@@ -30,7 +42,7 @@ def first_time_google_messages_connection():
         input("Appuyez sur Entrée une fois la connexion terminée...")
         
 
-        numbers_list = ["0767756606", '0907089897', '0904040302']
+        numbers_list = read_numbers()
         count = -1
         max_count = len(numbers_list)
 
